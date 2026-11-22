@@ -1,0 +1,122 @@
+@import "tailwindcss";
+
+:root {
+  --background: #000000;
+  --foreground: #fafafa;
+  --card: #000000;
+  --card-foreground: #fafafa;
+  --muted: #171717;
+  --muted-foreground: #a3a3a3;
+  --border: rgba(255, 255, 255, 0.12);
+  --input: transparent;
+  --ring: rgba(255, 255, 255, 0.35);
+  --brand-ember: #c2410c;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --font-sans: var(--font-poppins);
+  --font-serif: var(--font-poppins);
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: #000000;
+  color: var(--foreground);
+  font-family: var(--font-poppins), system-ui, sans-serif;
+}
+
+.font-serif {
+  font-family: var(--font-poppins), system-ui, sans-serif;
+}
+
+.skeleton-pulse {
+  animation: skeleton-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+.login-split-left {
+  background:
+    radial-gradient(ellipse 90% 70% at 20% 80%, rgba(194, 65, 12, 0.55), transparent 55%),
+    linear-gradient(160deg, #1a0a05 0%, #000000 55%, #000000 100%);
+}
+
+.underline-field {
+  display: block;
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0.5rem 0 0.75rem;
+  color: #ffffff;
+  font-size: 1rem;
+  line-height: 1.5;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.underline-field:focus {
+  border-bottom-color: #ffffff;
+}
+
+.underline-field::placeholder {
+  color: rgba(255, 255, 255, 0.28);
+}
+
+/* Stop browser autofill from painting a dark/yellow box over the underline style */
+.underline-field:-webkit-autofill,
+.underline-field:-webkit-autofill:hover,
+.underline-field:-webkit-autofill:focus {
+  -webkit-text-fill-color: #ffffff;
+  caret-color: #ffffff;
+  transition: background-color 99999s ease-in-out 0s;
+  box-shadow: 0 0 0 1000px #0c0c0c inset !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.55) !important;
+}
+
+@media print {
+  body {
+    background: white !important;
+    color: #111 !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-break {
+    break-before: page;
+  }
+
+  .print-card {
+    border: 1px solid #e4e4e7 !important;
+    background: white !important;
+    color: #18181b !important;
+    box-shadow: none !important;
+  }
+
+  .print-card * {
+    color: #18181b !important;
+  }
+}
