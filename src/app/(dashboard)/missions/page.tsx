@@ -1,4 +1,3 @@
-import { ensureRequestRuntime } from "@/lib/request-runtime";
 import Link from "next/link";
 import { format } from "date-fns";
 import { listMissions } from "@/lib/data/missions";
@@ -40,7 +39,6 @@ function MissionCards({ missions }: { missions: TestingMission[] }) {
 }
 
 export default async function MissionsPage() {
-  await ensureRequestRuntime();
   const [settings, active, upcoming, completed] = await Promise.all([
     getSettings(),
     listMissions("active"),

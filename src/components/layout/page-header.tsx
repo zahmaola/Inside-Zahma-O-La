@@ -16,7 +16,7 @@ export function PageHeader({
   return (
     <div
       className={cn(
-        "flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between",
+        "flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between",
         className,
       )}
     >
@@ -26,11 +26,13 @@ export function PageHeader({
             {eyebrow}
           </p>
         ) : null}
-        <h1 className="mt-2 font-serif text-4xl font-medium tracking-tight text-white md:text-5xl">
+        <h1 className="mt-2 text-4xl font-medium tracking-tight text-white md:text-5xl">
           {title}
         </h1>
         {description ? (
-          <p className="mt-2 text-sm text-zinc-500">{description}</p>
+          <p className="mt-2 max-w-xl text-sm leading-relaxed text-zinc-400">
+            {description}
+          </p>
         ) : null}
       </div>
       {action ? <div className="shrink-0">{action}</div> : null}

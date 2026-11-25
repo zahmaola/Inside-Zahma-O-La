@@ -180,9 +180,10 @@ export interface AuditLog {
 }
 
 export interface PointRules {
-  validated_bug: number;
-  high_priority_bug: number;
   critical_bug: number;
+  high_priority_bug: number;
+  medium_bug: number;
+  low_bug: number;
   useful_suggestion: number;
   completed_mission: number;
   documented_session: number;
@@ -190,9 +191,10 @@ export interface PointRules {
 }
 
 export const DEFAULT_POINT_RULES: PointRules = {
-  validated_bug: 20,
-  high_priority_bug: 30,
   critical_bug: 50,
+  high_priority_bug: 30,
+  medium_bug: 20,
+  low_bug: 10,
   useful_suggestion: 15,
   completed_mission: 10,
   documented_session: 5,

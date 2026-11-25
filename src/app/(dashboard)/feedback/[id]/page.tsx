@@ -1,4 +1,3 @@
-import { ensureRequestRuntime } from "@/lib/request-runtime";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
@@ -7,6 +6,7 @@ import {
   findSimilarFeedback,
   listFeedbackAttachments,
 } from "@/lib/data/feedback";
+import { getPointRules } from "@/lib/data/settings";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FeedbackStatusBadge } from "@/components/status-badge";
@@ -23,14 +23,14 @@ export default async function FeedbackDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await ensureRequestRuntime();
   const { id } = await params;
   const feedback = await getFeedback(id);
   if (!feedback) notFound();
 
-  const [similar, attachments] = await Promise.all([
+  const [similar, attachments, rules] = await Promise.all([
     findSimilarFeedback(feedback.title, feedback.employee_id, 0.55),
     listFeedbackAttachments(id),
+    getPointRules(),
   ]);
   const others = similar.filter((s) => s.id !== feedback.id);
 
@@ -110,7 +110,11 @@ export default async function FeedbackDetailPage({
             <CardTitle>Admin actions</CardTitle>
           </CardHeader>
           <CardContent>
-            <FeedbackDetailActions feedback={feedback} />
+            <FeedbackDetailActions
+              feedback={feedback}
+              rules={rules}
+              employeeName={feedback.employees?.full_name ?? null}
+            />
           </CardContent>
         </Card>
       </div>

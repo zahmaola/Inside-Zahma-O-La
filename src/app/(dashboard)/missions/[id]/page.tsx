@@ -1,4 +1,3 @@
-import { ensureRequestRuntime } from "@/lib/request-runtime";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
@@ -15,7 +14,6 @@ export default async function MissionDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await ensureRequestRuntime();
   const { id } = await params;
   const [mission, employees] = await Promise.all([
     getMission(id),

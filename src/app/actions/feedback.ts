@@ -146,8 +146,28 @@ export async function addAdminNotes(input: unknown): Promise<ActionResult> {
   return { success: true };
 }
 
-export async function validateFeedback(id: string): Promise<ActionResult> {
+const validateOptionsSchema = z.object({
+  severity: z.enum(["critical", "high", "medium", "low"]).optional(),
+  /** Admin-set points that replace the severity-based amount. */
+  points_override: z.coerce.number().int().min(0).max(1000).optional(),
+});
+
+export type ValidateFeedbackOptions = z.input<typeof validateOptionsSchema>;
+
+/**
+ * Admin validation — the only place feedback points are awarded.
+ * Points = configured value for the (possibly adjusted) severity, unless overridden.
+ */
+export async function validateFeedback(
+  id: string,
+  options?: ValidateFeedbackOptions,
+): Promise<ActionResult> {
   if (isDemoMode()) return { error: DEMO_WRITE_ERROR };
+
+  const parsedOptions = validateOptionsSchema.safeParse(options ?? {});
+  if (!parsedOptions.success) {
+    return { error: formatZodError(parsedOptions.error) };
+  }
 
   const { admin } = await requireAdmin();
   const supabase = await createClient();
@@ -167,19 +187,25 @@ export async function validateFeedback(id: string): Promise<ActionResult> {
     return { success: true };
   }
 
+  const severity = parsedOptions.data.severity ?? feedback.severity;
+
   const validatedFeedback = {
     ...feedback,
+    severity,
     validated: true,
     validated_at: feedback.validated_at ?? new Date().toISOString(),
   };
 
-  const amount = resolveFeedbackPoints(validatedFeedback, rules);
+  const amount =
+    parsedOptions.data.points_override ?? resolveFeedbackPoints(validatedFeedback, rules);
 
   const { error: updateError } = await supabase
     .from("feedback")
     .update({
+      severity,
       validated: true,
       validated_at: validatedFeedback.validated_at,
+      is_duplicate: false,
     })
     .eq("id", id);
 
@@ -194,7 +220,9 @@ export async function validateFeedback(id: string): Promise<ActionResult> {
   const award = await insertPointsTransaction(supabase, {
     employee_id: feedback.employee_id,
     amount,
-    reason: `Validated feedback: ${feedback.title}`,
+    reason: `Validated ${
+      feedback.category === "feature_suggestion" ? "suggestion" : `${severity} issue`
+    }: ${feedback.title}`,
     source_type: "feedback",
     source_id: id,
     created_by: admin?.id ?? null,
@@ -211,6 +239,45 @@ export async function validateFeedback(id: string): Promise<ActionResult> {
   revalidatePath("/leaderboard");
   revalidatePath("/overview");
   revalidatePath(`/employees/${feedback.employee_id}`);
+
+  return { success: true };
+}
+
+/** Admin rejects a report as invalid or duplicate — no points are awarded. */
+export async function markFeedbackInvalid(id: string): Promise<ActionResult> {
+  if (isDemoMode()) return { error: DEMO_WRITE_ERROR };
+
+  await requireAdmin();
+  const supabase = await createClient();
+
+  const { data: existing } = await supabase
+    .from("feedback")
+    .select("points_awarded")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (existing?.points_awarded) {
+    return {
+      error:
+        "Points were already awarded for this report. Use a manual points adjustment instead.",
+    };
+  }
+
+  const { error } = await supabase
+    .from("feedback")
+    .update({
+      is_duplicate: true,
+      validated: false,
+      validated_at: null,
+      status: "rejected",
+    })
+    .eq("id", id);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/feedback");
+  revalidatePath(`/feedback/${id}`);
+  revalidatePath("/overview");
 
   return { success: true };
 }

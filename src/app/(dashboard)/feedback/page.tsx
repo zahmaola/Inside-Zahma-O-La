@@ -1,4 +1,3 @@
-import { ensureRequestRuntime } from "@/lib/request-runtime";
 import Link from "next/link";
 import { format } from "date-fns";
 import { listFeedback } from "@/lib/data/feedback";
@@ -27,7 +26,6 @@ export default async function FeedbackPage({
     category?: string;
   }>;
 }) {
-  await ensureRequestRuntime();
   const { q, status, severity, category } = await searchParams;
 
   const filters = {

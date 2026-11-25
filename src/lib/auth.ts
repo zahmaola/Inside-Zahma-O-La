@@ -1,7 +1,9 @@
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
-export async function getCurrentAdmin() {
+/** Deduped per request — safe to call from layout + pages. */
+export const getCurrentAdmin = cache(async () => {
   if (!isSupabaseConfigured()) return null;
 
   const supabase = await createClient();
@@ -13,14 +15,12 @@ export async function getCurrentAdmin() {
 
   const { data: admin } = await supabase
     .from("admins")
-    .select("*")
+    .select("id, user_id, display_name, email")
     .eq("user_id", user.id)
     .maybeSingle();
 
-  return admin
-    ? { user, admin }
-    : { user, admin: null };
-}
+  return admin ? { user, admin } : { user, admin: null };
+});
 
 export async function requireAdmin() {
   const result = await getCurrentAdmin();

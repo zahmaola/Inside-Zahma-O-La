@@ -1,4 +1,3 @@
-import { ensureRequestRuntime } from "@/lib/request-runtime";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
@@ -11,7 +10,6 @@ export default async function ReportPresentPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await ensureRequestRuntime();
   const { id } = await params;
   const report = await getWeeklyReport(id);
   if (!report) notFound();

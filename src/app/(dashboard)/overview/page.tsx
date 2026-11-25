@@ -1,4 +1,3 @@
-import { ensureRequestRuntime } from "@/lib/request-runtime";
 import Link from "next/link";
 import { format, formatDistanceToNow } from "date-fns";
 import {
@@ -25,7 +24,6 @@ import { FeedbackStatusBadge } from "@/components/status-badge";
 import type { FeedbackStatus } from "@/types/database";
 
 export default async function OverviewPage() {
-  await ensureRequestRuntime();
   const [stats, departments, leaderboard, activity, missions] = await Promise.all([
     getOverviewStats(),
     getDepartmentParticipation(),
@@ -35,17 +33,40 @@ export default async function OverviewPage() {
   ]);
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-8">
       <PageHeader
         eyebrow={format(new Date(), "EEEE, MMMM d").toUpperCase()}
         title="Overview"
-        description="Punch testing activity. See who showed up this week."
+        description="Your testing pulse, participation, and insights — all in one place."
         action={
           <Button asChild>
             <Link href="/feedback">Add feedback</Link>
           </Button>
         }
       />
+
+      <div className="glass-hero relative overflow-hidden rounded-[28px] px-6 py-8 md:px-8 md:py-10">
+        <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-amber-300/20 blur-3xl" />
+        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-amber-100/70">
+          This week
+        </p>
+        <h2 className="mt-3 max-w-lg text-3xl font-medium tracking-tight text-white md:text-4xl">
+          Explore your testing performance
+        </h2>
+        <p className="mt-3 max-w-md text-sm text-white/70">
+          {stats.activeTestersThisWeek} active testers ·{" "}
+          {formatPercent(stats.participationRate)} participation ·{" "}
+          {formatNumber(stats.pointsThisWeek)} points awarded
+        </p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Button asChild>
+            <Link href="/missions">View missions</Link>
+          </Button>
+          <Button variant="secondary" asChild>
+            <Link href="/leaderboard">Leaderboard</Link>
+          </Button>
+        </div>
+      </div>
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard

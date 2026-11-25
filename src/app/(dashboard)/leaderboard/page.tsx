@@ -1,4 +1,3 @@
-import { ensureRequestRuntime } from "@/lib/request-runtime";
 import Link from "next/link";
 import { Suspense } from "react";
 import {
@@ -19,7 +18,6 @@ export default async function LeaderboardPage({
 }: {
   searchParams: Promise<{ period?: string; department?: string }>;
 }) {
-  await ensureRequestRuntime();
   const { period: periodParam, department } = await searchParams;
   const period = (periodParam as LeaderboardPeriod) ?? "weekly";
   const settings = await getSettings();

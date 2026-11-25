@@ -18,7 +18,7 @@ export function MobileNav() {
       <Button
         variant="default"
         size="icon"
-        className="fixed bottom-4 right-4 z-40"
+        className="fixed bottom-4 right-4 z-40 shadow-lg"
         onClick={() => setOpen((v) => !v)}
         aria-label="Open navigation"
       >
@@ -26,8 +26,8 @@ export function MobileNav() {
       </Button>
 
       {open ? (
-        <div className="fixed inset-0 z-40 bg-black/80 p-4 backdrop-blur-sm">
-          <div className="ml-auto max-w-xs rounded-2xl border border-white/10 bg-black p-3">
+        <div className="fixed inset-0 z-40 bg-black/70 p-4 backdrop-blur-md">
+          <div className="glass-panel ml-auto max-w-xs rounded-[24px] p-3">
             <div className="px-3 py-3">
               <Image
                 src="/brand/zahma-o-la-logo.png"
@@ -51,8 +51,8 @@ export function MobileNav() {
                     className={cn(
                       "flex items-center gap-3 rounded-full px-3 py-2.5 text-sm",
                       active
-                        ? "bg-white/10 text-white"
-                        : "text-zinc-400 hover:bg-white/[0.04] hover:text-white",
+                        ? "bg-white text-zinc-950"
+                        : "text-zinc-400 hover:bg-white/5 hover:text-white",
                     )}
                   >
                     <Icon className="h-4 w-4" />

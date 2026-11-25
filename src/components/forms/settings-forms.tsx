@@ -12,9 +12,10 @@ import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
 
 const RULE_FIELDS: { key: keyof PointRules; label: string }[] = [
-  { key: "validated_bug", label: "Validated bug" },
-  { key: "high_priority_bug", label: "High priority bug" },
-  { key: "critical_bug", label: "Critical bug" },
+  { key: "critical_bug", label: "Critical issue" },
+  { key: "high_priority_bug", label: "High severity issue" },
+  { key: "medium_bug", label: "Medium severity issue" },
+  { key: "low_bug", label: "Low severity issue" },
   { key: "useful_suggestion", label: "Useful suggestion" },
   { key: "completed_mission", label: "Completed mission" },
   { key: "documented_session", label: "Documented session" },

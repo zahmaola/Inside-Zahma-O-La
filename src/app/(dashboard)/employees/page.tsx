@@ -1,4 +1,3 @@
-import { ensureRequestRuntime } from "@/lib/request-runtime";
 import Link from "next/link";
 import { listEmployees } from "@/lib/data/employees";
 import { getSettings } from "@/lib/data/settings";
@@ -15,7 +14,6 @@ export default async function EmployeesPage({
 }: {
   searchParams: Promise<{ q?: string }>;
 }) {
-  await ensureRequestRuntime();
   const { q } = await searchParams;
   const [employees, settings] = await Promise.all([
     listEmployees(q),

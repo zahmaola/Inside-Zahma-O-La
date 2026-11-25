@@ -54,11 +54,33 @@ function filterDemoFeedback(filters: FeedbackFilters): Feedback[] {
   return list.sort((a, b) => (a.reported_at < b.reported_at ? 1 : -1));
 }
 
+/** Lightweight count for badges — avoids loading full feedback rows. */
+export async function getPendingFeedbackCount(): Promise<number> {
+  if (isDemoMode()) {
+    return DEMO_FEEDBACK.filter((f) => f.status === "new").length;
+  }
+
+  const supabase = await createClient();
+  const { count, error } = await supabase
+    .from("feedback")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "new");
+
+  if (error) throw new Error(error.message);
+  return count ?? 0;
+}
+
 export async function listFeedback(filters: FeedbackFilters = {}): Promise<Feedback[]> {
   if (isDemoMode()) return filterDemoFeedback(filters);
 
   const supabase = await createClient();
-  let query = supabase.from("feedback").select(feedbackSelect).order("reported_at", { ascending: false });
+  let query = supabase
+    .from("feedback")
+    .select(
+      "id, title, category, severity, status, reported_at, feature_module, employee_id, department_id, validated, employees(id, full_name), departments(id, name)",
+    )
+    .order("reported_at", { ascending: false })
+    .limit(200);
 
   if (filters.search?.trim()) {
     const q = `%${filters.search.trim()}%`;
@@ -80,7 +102,7 @@ export async function listFeedback(filters: FeedbackFilters = {}): Promise<Feedb
 
   const { data, error } = await query;
   if (error) throw new Error(error.message);
-  return data ?? [];
+  return (data ?? []) as unknown as Feedback[];
 }
 
 export async function getFeedback(id: string): Promise<Feedback | null> {

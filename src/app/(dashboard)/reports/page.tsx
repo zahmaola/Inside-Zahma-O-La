@@ -1,4 +1,3 @@
-import { ensureRequestRuntime } from "@/lib/request-runtime";
 import Link from "next/link";
 import { format } from "date-fns";
 import { listWeeklyReports } from "@/lib/data/reports";
@@ -10,7 +9,6 @@ import { Presentation } from "lucide-react";
 import { PageHeader } from "@/components/layout/page-header";
 
 export default async function ReportsPage() {
-  await ensureRequestRuntime();
   const reports = await listWeeklyReports();
   const { start, end } = getCurrentWeekRange();
   const periodStart = toISODate(start);

@@ -83,9 +83,10 @@ export const pointsAdjustmentSchema = z.object({
 export const settingsSchema = z.object({
   campaign_name: z.string().min(1),
   point_rules: z.object({
-    validated_bug: z.coerce.number().int().min(0),
-    high_priority_bug: z.coerce.number().int().min(0),
     critical_bug: z.coerce.number().int().min(0),
+    high_priority_bug: z.coerce.number().int().min(0),
+    medium_bug: z.coerce.number().int().min(0),
+    low_bug: z.coerce.number().int().min(0),
     useful_suggestion: z.coerce.number().int().min(0),
     completed_mission: z.coerce.number().int().min(0),
     documented_session: z.coerce.number().int().min(0),

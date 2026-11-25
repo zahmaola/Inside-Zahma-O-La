@@ -1,4 +1,3 @@
-import { ensureRequestRuntime } from "@/lib/request-runtime";
 import { Suspense } from "react";
 import { getAnalytics } from "@/lib/data/analytics";
 import { AnalyticsCharts } from "@/components/charts/analytics-charts";
@@ -14,7 +13,6 @@ export default async function AnalyticsPage({
 }: {
   searchParams: Promise<{ preset?: string }>;
 }) {
-  await ensureRequestRuntime();
   const { preset: presetParam } = await searchParams;
   const preset = (presetParam as DateRangePreset) ?? "this_week";
   const data = await getAnalytics(preset);
